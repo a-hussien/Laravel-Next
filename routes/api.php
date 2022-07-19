@@ -1,7 +1,6 @@
 <?php
 
-use App\Models\User;
-use Illuminate\Http\Request;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,12 +14,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
-//     return $request->user();
-// });
-
 Route::group(['prefix' => 'v1'], function(){
-    Route::get('/users', function() {
-        return response()->json(User::all());
+    Route::get('/users', [UserController::class, 'index']);
+    Route::post('/user', [UserController::class, 'store']);
+    Route::post('/login', [UserController::class, 'signin']);
+    Route::middleware(['auth:sanctum'])->group(function(){
+        Route::get('/user', [UserController::class, 'show']);
+        Route::post('/logout', [UserController::class, 'signout']);
     });
 });
