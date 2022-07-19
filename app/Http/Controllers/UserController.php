@@ -18,6 +18,7 @@ class UserController extends Controller
     public function index()
     {
         $users = User::all();
+
         return response()->json($users);
     }
 
@@ -32,21 +33,19 @@ class UserController extends Controller
         $data = [
             'name' => $request->input('name'),
             'email' => $request->input('email'),
-            'password' => Hash::make($request->input('password'))
+            'password' => Hash::make($request->input('password')),
         ];
 
-        try
-        {
+        try {
             $user = User::create($data);
             $response = [
                 'msg' => 'User Created',
-                'data' => $user
+                'data' => $user,
             ];
-        }
-        catch (\Throwable $th) {
+        } catch (\Throwable $th) {
             $response = [
                 'msg' => 'Error',
-                'data' => $th
+                'data' => $th,
             ];
         }
 
@@ -57,19 +56,17 @@ class UserController extends Controller
     {
         $user = Auth::user();
 
-        if($user) {
+        if ($user) {
             return response()->json(['msg' => 'Authenticated user', 'data' => $user], 200);
         }
     }
 
     public function signin(Request $request)
     {
-        try
-        {
+        try {
             $checkAuth = Auth::attempt($request->only('email', 'password'));
 
-            if(!$checkAuth)
-            {
+            if (! $checkAuth) {
                 return response()->json(['msg' => 'Invalid credentials'], 401);
             }
 
@@ -79,10 +76,7 @@ class UserController extends Controller
 
             return response()->json(['msg' => 'Authenticated', 'data' => $user], 200)
                              ->withCookie($cookie);
-
-
-        }
-        catch (\Throwable $th) {
+        } catch (\Throwable $th) {
             return response()->json(['msg' => 'error', 'data' => $th], 400);
         }
     }
@@ -92,10 +86,9 @@ class UserController extends Controller
         $user = Auth::user();
 
         try {
-
-            if($user)
-            {
+            if ($user) {
                 $cookie = Cookie::forget('jwt');
+
                 return response()->json(['msg' => 'User logout success'], 200)
                                  ->withCookie($cookie);
             }
@@ -103,6 +96,7 @@ class UserController extends Controller
             return response()->json(['msg' => 'Error', 'data' => $th], 400);
         }
     }
+
     /**
      * Update the specified resource in storage.
      *
